@@ -231,11 +231,11 @@ class ContentHandlerTest extends TestCase
                     new VersionInfo([
                         'contentInfo' => new ContentInfo([
                             'currentVersionNo' => 1,
-                            'mainLanguageCode' => 'eng-GB'
+                            'mainLanguageCode' => 'eng-GB',
                         ]),
                         'names' => [
-                            'eng-GB' => ''
-                        ]
+                            'eng-GB' => '',
+                        ],
                     ])
                 )
             );
@@ -311,11 +311,11 @@ class ContentHandlerTest extends TestCase
                     new VersionInfo([
                         'contentInfo' => new ContentInfo([
                             'currentVersionNo' => 1,
-                            'mainLanguageCode' => 'eng-GB'
+                            'mainLanguageCode' => 'eng-GB',
                         ]),
                         'names' => [
-                            'eng-GB' => ''
-                        ]
+                            'eng-GB' => '',
+                        ],
                     ])
                 )
             );
