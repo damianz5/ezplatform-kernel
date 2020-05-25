@@ -6,6 +6,7 @@
  */
 namespace eZ\Publish\Core\MVC\Symfony\EventListener;
 
+use Doctrine\ORM\EntityManager;
 use eZ\Publish\Core\Base\Exceptions\InvalidArgumentException;
 use eZ\Publish\Core\MVC\Symfony\Component\Serializer\SerializerTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -18,6 +19,7 @@ use eZ\Publish\Core\MVC\Symfony\MVCEvents;
 use eZ\Publish\Core\MVC\Symfony\Routing\SimplifiedRequest;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 
 /**
  * kernel.request listener, triggers SiteAccess matching.
@@ -33,12 +35,17 @@ class SiteAccessMatchListener implements EventSubscriberInterface
     /** @var \Symfony\Component\EventDispatcher\EventDispatcherInterface */
     protected $eventDispatcher;
 
+    /** @var \Doctrine\DBAL\Connection */
+    private $connection;
+
     public function __construct(
         SiteAccessRouter $siteAccessRouter,
-        EventDispatcherInterface $eventDispatcher
+        EventDispatcherInterface $eventDispatcher,
+        EntityManager $entityManager
     ) {
         $this->siteAccessRouter = $siteAccessRouter;
         $this->eventDispatcher = $eventDispatcher;
+        $this->connection = $entityManager->getConnection();
     }
 
     public static function getSubscribedEvents()
@@ -63,7 +70,21 @@ class SiteAccessMatchListener implements EventSubscriberInterface
             $siteAccess = $serializer->deserialize($request->attributes->get('serialized_siteaccess'), SiteAccess::class, 'json');
             if ($siteAccess->matcher !== null) {
                 if (in_array(SiteAccess\Matcher::class, class_implements($siteAccess->matcher))) {
-                    $siteAccess->matcher = $serializer->deserialize($request->attributes->get('serialized_siteaccess_matcher'), $siteAccess->matcher, 'json');
+
+                    $siteAccess->matcher = $serializer->deserialize(
+                        $request->attributes->get('serialized_siteaccess_matcher'),
+                        $siteAccess->matcher,
+                        'json',
+                        [
+                            AbstractNormalizer::IGNORED_ATTRIBUTES => ['request', 'connection'],
+                            'default_constructor_arguments' => [
+                                $siteAccess->matcher => [
+                                    'connection' => $this->connection
+                                ]
+                            ],
+                        ]
+                    );
+
                 } else {
                     throw new InvalidArgumentException(
                         'matcher',

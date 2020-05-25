@@ -70,7 +70,7 @@ class DecoratedFragmentRenderer implements FragmentRendererInterface, SiteAccess
             $uri->attributes['serialized_siteaccess_matcher'] = $this->getSerializer()->serialize(
                 $siteAccess->matcher,
                 'json',
-                [AbstractNormalizer::IGNORED_ATTRIBUTES => ['request']]
+                [AbstractNormalizer::IGNORED_ATTRIBUTES => ['request', 'connection']]
             );
         }
 

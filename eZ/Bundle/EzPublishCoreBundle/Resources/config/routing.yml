@@ -16,7 +16,7 @@ services:
 
     ezpublish.siteaccess_match_listener:
         class: eZ\Publish\Core\MVC\Symfony\EventListener\SiteAccessMatchListener
-        arguments: ["@ezpublish.siteaccess_router", "@event_dispatcher"]
+        arguments: ["@ezpublish.siteaccess_router", "@event_dispatcher", "@doctrine.orm.default_entity_manager"]
         tags:
             - { name: kernel.event_subscriber }
 

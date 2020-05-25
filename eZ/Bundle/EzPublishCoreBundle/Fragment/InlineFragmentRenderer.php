@@ -53,7 +53,7 @@ class InlineFragmentRenderer extends BaseRenderer implements SiteAccessAware
                 $uri->attributes['serialized_siteaccess_matcher'] = $this->getSerializer()->serialize(
                     $siteAccess->matcher,
                     'json',
-                    [AbstractNormalizer::IGNORED_ATTRIBUTES => ['request']]
+                    [AbstractNormalizer::IGNORED_ATTRIBUTES => ['request', 'connection']]
                 );
             }
             if ($request->attributes->has('semanticPathinfo')) {
